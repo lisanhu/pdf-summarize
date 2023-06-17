@@ -31,5 +31,5 @@ eggs/
 *.out
 .venv/
 .env
-*.txt
+/pdf-summarize-bin/*.txt
 
