@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        #result {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        #loading {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form id="upload-form">
+        <input type="file" id="file-input" multiple>
+        <textarea id="url-input" rows="4" cols="50"></textarea>
+        <button type="submit">Upload</button>
+    </form>
+    <div id="result"></div>
+    <div id="loading">Loading...</div>
+
+    <script>
+    function isValidUrl(string) {
+        try {
+            new URL(string);
+        } catch (_) {
+            return false;  
+        }
+        return true;
+    }
+
+    $('#upload-form').on('submit', function(e) {
+        e.preventDefault();
+        $('#loading').show();
+        $('#result').empty();
+        
+        var formData = new FormData();
+        var files = $('#file-input')[0].files;
+        for (var i = 0; i < files.length; i++) {
+            formData.append('file', files[i]);
+        }
+
+        var urls = $('#url-input').val().split('\n').filter(isValidUrl);
+        for (var i = 0; i < urls.length; i++) {
+            formData.append('url', urls[i]);
+        }
+
+        $.ajax({
+            url: '/upload',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                $('#loading').hide();
+                $('#result').text(data.result);
+            },
+            error: function() {
+                $('#loading').hide();
+                $('#result').text('Error occurred.');
+            }
+        });
+    });
+    </script>
+</body>
+</html>

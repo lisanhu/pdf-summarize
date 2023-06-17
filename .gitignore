@@ -1,0 +1,6 @@
+target/
+*.pdf
+*.out
+.venv/
+.env
+Cargo.lock
